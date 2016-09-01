@@ -1,0 +1,8 @@
+gosha/
+node_modules/
+.DS_Store
+Thumbs.db
+.idea
+*.sublime*
+*.log
+Mockup.psd

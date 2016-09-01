@@ -1,0 +1,5 @@
+**/*.min.js
+**/check.js
+data/*.js
+config/*.js
+bin/*
