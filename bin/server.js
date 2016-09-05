@@ -27,29 +27,20 @@ app.use(middleware);
 
 
 app.
-    get('/regenerate', (req, res) => {
-      hotels.regenerate().
-          then(() => res.sendStatus(200)).
-          catch(err => res.sendStatus(500));
-    }).
     get('/api/hotels', (req, res) => {
       hotels.read(req.query.filter, req.query.from, req.query.to).then((data) => {
         if (isJSONPRequest(req)) res.jsonp(data);
         else res.json(data);
-      }).catch(() => {
-        res.sendStatus(500);
+      }).catch(err => {
+        console.error('Ошибка при запросе к API', err.message);
+        res.status(500).send(err);
       });
-    }).
-    put('/api/hotels/:hotelId', (req, res) => {
-      hotels.update(req.params);
     }).
     get('*', serve);
 
 
 app.listen(PORT, '0.0.0.0', (err) => {
-  if (err) {
-    console.log(err);
-  }
+  if (err) console.error('Ошибка!', err);
 
   console.info('==> 🌎 Сервер запущен на порту %s. Откройте http://localhost:%s/ у себя в браузере. Чтобы остановить сервер, нажмите Ctrl+C', PORT, PORT);
 });

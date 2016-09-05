@@ -6,10 +6,10 @@
   "author": "o0",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/htmlacademy-javascript/100868-keksobooking"
   },
   "bugs": {
-    "url": ""
+    "url": "https://github.com/htmlacademy-javascript/100868-keksobooking/issues"
   },
   "homepage": "",
   "devDependencies": {
@@ -17,8 +17,6 @@
     "eslint-plugin-requirejs": "^2.0.1",
     "express": "^4.14.0",
     "finalhandler": "0.5.0",
-    "levelup": "",
-    "leveldown": "",
     "webpack": "^1.13.1",
     "webpack-dev-middleware": "^1.6.1"
   },
