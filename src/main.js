@@ -7,7 +7,6 @@ define([
   './utils'
 ], function(Hotel, load, utils) {
   var THROTTLE_TIMEOUT = 100;
-  var GAP = 100;
   var HOTELS_LOAD_URL = '/api/hotels';
 
   var activeFilter = 'all';
