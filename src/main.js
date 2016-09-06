@@ -39,7 +39,7 @@ define([
   };
 
   var scrollHandler = utils.throttle(function() {
-    if (footer.getBoundingClientRect().bottom - window.innerHeight <= GAP) {
+    if (utils.elementIsAtTheBottom(footer)) {
       loadHotels(activeFilter, ++pageNumber);
     }
   }, THROTTLE_TIMEOUT);
