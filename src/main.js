@@ -3,8 +3,9 @@
 
 define([
   './hotel',
-  './load'
-], function(Hotel, load) {
+  './load',
+  './utils'
+], function(Hotel, load, utils) {
   var THROTTLE_TIMEOUT = 100;
   var GAP = 100;
   var HOTELS_LOAD_URL = '/api/hotels';
@@ -37,21 +38,17 @@ define([
     loadHotels(filterID, pageNumber);
   };
 
+  var scrollHandler = utils.throttle(function() {
+    if (footer.getBoundingClientRect().bottom - window.innerHeight <= GAP) {
+      loadHotels(activeFilter, ++pageNumber);
+    }
+  }, THROTTLE_TIMEOUT);
+
+  window.addEventListener('scroll', scrollHandler);
+
   filters.addEventListener('click', function(evt) {
     if (evt.target.classList.contains('hotel-filter')) {
       changeFilter(evt.target.id);
-    }
-  });
-
-  var lastCall = Date.now();
-
-  window.addEventListener('scroll', function() {
-    if (Date.now() - lastCall >= THROTTLE_TIMEOUT) {
-      if (footer.getBoundingClientRect().bottom - window.innerHeight <= GAP) {
-        loadHotels(activeFilter, ++pageNumber);
-      }
-
-      lastCall = Date.now();
     }
   });
 
