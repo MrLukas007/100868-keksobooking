@@ -65,6 +65,9 @@ define(['./load', './utils'], function(loader, utils) {
     /** @type {google.maps.Map} */
     this.mapElement = null;
 
+    /** @type {Array.<google.maps.Marker>} */
+    this.markers = [];
+
     /** @type {google.maps.MapOptions} */
     this.defaults = {
       center: TOKYO_CENTER,
@@ -120,8 +123,14 @@ define(['./load', './utils'], function(loader, utils) {
     }.bind(this), MAPS_ANIMATION_TIMEOUT);
   };
 
+  /** Сокрытие карты. Сворачивает карту и прячет все маркеры на ней */
   GMap.prototype.hide = function() {
     utils.setElementHidden(this.container, true);
+
+    this.markers.forEach(function(marker) {
+      marker.setMap(null);
+    });
+    this.markers = [];
 
     setTimeout(function() {
       window.google.maps.event.trigger(this.mapElement, 'resize');
@@ -130,7 +139,13 @@ define(['./load', './utils'], function(loader, utils) {
 
   /** @param {Array.<Object>} markers */
   GMap.prototype.setMarkers = function(markers) {
-    this.markers = markers;
+    this.markers = markers.map(function(marker) {
+      return new window.google.maps.Marker({
+        map: this.mapElement,
+        position: marker.location,
+        title: marker.name
+      });
+    }, this);
   };
 
   /** @type {Function} Коллбэк обработчика клика по переключателю карты */

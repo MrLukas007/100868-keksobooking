@@ -52,6 +52,13 @@ define([
   changeFilter(activeFilter);
   var mapController = map(mapContainer, isMapRequested());
 
+  /**
+   * @override Обработчик клика по переключателю карты. Наличие абстрактного
+   * обработчика позволяет описывать поведение карты по-разному. В нашем
+   * случае при клике на переключатель изменяется только адрес страницы,
+   * а карта уже реагирует на изменение адреса и принимает решение, стоит ли
+   * переключиться в полноэкранный режим
+   */
   mapController.onSwitchClick = function() {
     location.hash = isMapRequested() ? '' : 'map';
   };
@@ -59,6 +66,16 @@ define([
   window.addEventListener('scroll', scrollHandler);
   window.addEventListener('popstate', function() {
     if (isMapRequested()) {
+      // NB! На открытой карте должен быть показан не тот список, который
+      // отображен в виде карточек, а полный список всех отелей Токио, потому
+      // что постраничное отображение и фильтры — это особенность отрисовки
+      // исключительно списка, а не карты. Поэтому перед открытием карты
+      // будем загружать все отели Токио и передавать их в объект карты
+      // для отрисовки
+      loader.load(HOTELS_LOAD_URL, { }, function(loadedMarkers) {
+        mapController.setMarkers(loadedMarkers);
+      });
+
       mapController.show();
     } else {
       mapController.hide();
