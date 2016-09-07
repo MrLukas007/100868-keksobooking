@@ -59,6 +59,8 @@ define([
    */
   var checkMap = function(map) {
     if (isMapRequested()) {
+      map.show();
+
       // NB! На открытой карте должен быть показан не тот список, который
       // отображен в виде карточек, а полный список всех отелей Токио, потому
       // что постраничное отображение и фильтры — это особенность отрисовки
@@ -67,7 +69,6 @@ define([
       // для отрисовки
       loader.load(HOTELS_LOAD_URL, { }, function(loadedMarkers) {
         map.setMarkers(loadedMarkers);
-        map.show();
       });
     } else {
       map.hide();
