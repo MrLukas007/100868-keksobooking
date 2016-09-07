@@ -31,7 +31,7 @@ define(['./load', './utils'], function(loader, utils) {
    * поэтому событие обновления размера нужно вызывать только один раз в конце
    * анимации
    */
-  var MAPS_ANIMATION_TIMEOUT = 500;
+  var MAPS_ANIMATION_TIMEOUT = 200;
 
 
   /**
@@ -39,6 +39,7 @@ define(['./load', './utils'], function(loader, utils) {
    * изначальная центральная точка, с которой начинается показ карт
    */
   var TOKYO_CENTER = { lat: 35.6895, lng: 139.6917 };
+
 
   /**
    * Конструктор создает только объект для управления картой,
@@ -103,16 +104,16 @@ define(['./load', './utils'], function(loader, utils) {
     utils.setElementHidden(this.container, false);
 
     setTimeout(function() {
-      google.maps.event.trigger(this.mapElement, 'resize');
-    }, MAPS_ANIMATION_TIMEOUT);
+      window.google.maps.event.trigger(this.mapElement, 'resize');
+    }.bind(this), MAPS_ANIMATION_TIMEOUT);
   };
 
   GMap.prototype.hide = function() {
     utils.setElementHidden(this.container, true);
 
     setTimeout(function() {
-      google.maps.event.trigger(this.mapElement, 'resize');
-    }, MAPS_ANIMATION_TIMEOUT);
+      window.google.maps.event.trigger(this.mapElement, 'resize');
+    }.bind(this), MAPS_ANIMATION_TIMEOUT);
   };
 
   /** @param {Array.<Object>} markers */
@@ -152,7 +153,7 @@ define(['./load', './utils'], function(loader, utils) {
     //
     // Подход к созданию объекта, всегда существующего в единственном экземпляре
     // распространен в программировании и является одним из классических
-    // паттернов ООП — синглтоном (англ. Singleton — одиночка)
+    // паттернов ООП — синглтоном (англ. Singleton — одиночка)
     return mapController;
   };
 });

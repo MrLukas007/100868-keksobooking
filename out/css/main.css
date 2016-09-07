@@ -184,20 +184,28 @@ body {
 
 /* Map preview */
 .map {
-  bottom: 0;
-  height: calc(100vh - 10px);
+  bottom: 3vh;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  height: 93vh;
   left: 0;
+  margin-left: 5%;
   position: fixed;
-  transition: height 300ms ease-out;
-  width: 100%;
+  transform: scale(1.05);
+  transition: transform 150ms ease-out;
+  width: 90%;
   z-index: 1;
 }
 
 .map.hidden {
+  bottom: auto;
+  box-shadow: none;
   display: block !important;
   height: 68px;
+  margin-left: 0;
   position: relative;
+  transform: scale(1);
   transition: none;
+  width: 100%;
   z-index: 0;
 }
 
