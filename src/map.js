@@ -72,6 +72,11 @@ define(['./load', './utils'], function(loader, utils) {
     this.defaults = {
       center: TOKYO_CENTER,
       scrollwheel: false,
+      styles: [{
+        featureType: 'poi',
+        elementType: 'labels',
+        stylers: [{ visibility: 'off' }]
+      }],
       zoom: 14
     };
   };
@@ -87,11 +92,9 @@ define(['./load', './utils'], function(loader, utils) {
    * @static
    * @param {GMap} map
    * @param {HTMLElement} container
-   * @param {boolean=} expand Флаг, показывающий, открывать ли карту сразу после
-   * инициализации. Необязательный параметр
    * @param {Function=} onDecorate
    */
-  GMap.decorate = function(map, container, expand, onDecorate) {
+  GMap.decorate = function(map, container, onDecorate) {
     map.container = container;
     map.mapContainer = map.container.querySelector('.map-container');
     map.switchElement = map.container.querySelector('.map-switch');
@@ -108,10 +111,6 @@ define(['./load', './utils'], function(loader, utils) {
 
     if (typeof onDecorate === 'function') {
       onDecorate();
-    }
-
-    if (expand) {
-      map.show();
     }
   };
 
@@ -163,11 +162,11 @@ define(['./load', './utils'], function(loader, utils) {
    * @param {Function=} onDecorate
    * @return {GMap}
    */
-  return function(container, expandByDefault, onDecorate) {
+  return function(container, onDecorate) {
     if (!isAPIInitialized) {
       mapController = new GMap();
       loader.loadJSONP(GOOGLE_MAPS_URL, function() {
-        GMap.decorate(mapController, container, expandByDefault, onDecorate);
+        GMap.decorate(mapController, container, onDecorate);
         isAPIInitialized = true;
       }, { key: GOOGLE_MAPS_KEY });
     }

@@ -18,12 +18,15 @@ define(function() {
       var xhr = new XMLHttpRequest();
 
       xhr.onload = function(evt) {
-        var loadedData = JSON.parse(evt.target.response);
-        callback(loadedData);
+        try {
+          var loadedData = JSON.parse(evt.target.response);
+          callback(loadedData);
+        } catch(err) {
+          console.warn(err);
+        }
       };
 
       xhr.open('GET', url + '?' + getSearchString(params));
-
       xhr.send();
     },
 

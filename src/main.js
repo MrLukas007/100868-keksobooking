@@ -6,7 +6,7 @@ define([
   './load',
   './map',
   './utils'
-], function(Hotel, loader, map, utils) {
+], function(Hotel, loader, initializeMap, utils) {
   var THROTTLE_TIMEOUT = 100;
   var HOTELS_LOAD_URL = '/api/hotels';
 
@@ -50,7 +50,34 @@ define([
   }, THROTTLE_TIMEOUT);
 
   changeFilter(activeFilter);
-  var mapController = map(mapContainer, isMapRequested());
+
+  /**
+   * Проверка состояния приложения — запрошена ли карта. В случае если карта
+   * запрошена, скачивается список отелей и карта разворачивается на полный
+   * экран. В противном случае ничего не происходит
+   * @param {GMap} map
+   */
+  var checkMap = function(map) {
+    if (isMapRequested()) {
+      // NB! На открытой карте должен быть показан не тот список, который
+      // отображен в виде карточек, а полный список всех отелей Токио, потому
+      // что постраничное отображение и фильтры — это особенность отрисовки
+      // исключительно списка, а не карты. Поэтому перед открытием карты
+      // будем загружать все отели Токио и передавать их в объект карты
+      // для отрисовки
+      loader.load(HOTELS_LOAD_URL, { }, function(loadedMarkers) {
+        map.setMarkers(loadedMarkers);
+        map.show();
+      });
+    } else {
+      map.hide();
+    }
+  };
+
+  /** @type {GMap} */
+  var mapController = initializeMap(mapContainer, function() {
+    checkMap(mapController);
+  });
 
   /**
    * @override Обработчик клика по переключателю карты. Наличие абстрактного
@@ -65,21 +92,7 @@ define([
 
   window.addEventListener('scroll', scrollHandler);
   window.addEventListener('popstate', function() {
-    if (isMapRequested()) {
-      // NB! На открытой карте должен быть показан не тот список, который
-      // отображен в виде карточек, а полный список всех отелей Токио, потому
-      // что постраничное отображение и фильтры — это особенность отрисовки
-      // исключительно списка, а не карты. Поэтому перед открытием карты
-      // будем загружать все отели Токио и передавать их в объект карты
-      // для отрисовки
-      loader.load(HOTELS_LOAD_URL, { }, function(loadedMarkers) {
-        mapController.setMarkers(loadedMarkers);
-      });
-
-      mapController.show();
-    } else {
-      mapController.hide();
-    }
+    checkMap(mapController);
   });
 
   filters.addEventListener('click', function(evt) {
