@@ -13,16 +13,28 @@ define(function() {
     }).join('&');
   };
 
-  return function(url, params, callback) {
-    var xhr = new XMLHttpRequest();
+  return {
+    load: function(url, params, callback) {
+      var xhr = new XMLHttpRequest();
 
-    xhr.onload = function(evt) {
-      var loadedData = JSON.parse(evt.target.response);
-      callback(loadedData);
-    };
+      xhr.onload = function(evt) {
+        var loadedData = JSON.parse(evt.target.response);
+        callback(loadedData);
+      };
 
-    xhr.open('GET', url + '?' + getSearchString(params));
+      xhr.open('GET', url + '?' + getSearchString(params));
 
-    xhr.send();
+      xhr.send();
+    },
+
+    loadJSONP: function(url, callback, cbName) {
+      cbName = cbName || 'cb' + Date.now();
+      window[cbName] = callback;
+
+      var scriptElement = document.createElement('script');
+      scriptElement.src = url + '?callback=' + cbName;
+      scriptElement.async = true;
+      document.body.appendChild(scriptElement);
+    }
   };
 });

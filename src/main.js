@@ -4,8 +4,9 @@
 define([
   './hotel',
   './load',
+  './map',
   './utils'
-], function(Hotel, load, utils) {
+], function(Hotel, loader, map, utils) {
   var THROTTLE_TIMEOUT = 100;
   var HOTELS_LOAD_URL = '/api/hotels';
 
@@ -13,6 +14,7 @@ define([
   var container = document.querySelector('.hotels-list');
   var filters = document.querySelector('.hotels-filters');
   var footer = document.querySelector('footer');
+  var mapContainer = document.querySelector('.map');
   var pageNumber = 0;
   var pageSize = 9;
 
@@ -23,7 +25,7 @@ define([
   };
 
   var loadHotels = function(filter, currentPageNumber) {
-    load(HOTELS_LOAD_URL, {
+    loader.load(HOTELS_LOAD_URL, {
       from: currentPageNumber * pageSize,
       to: currentPageNumber * pageSize + pageSize,
       filter: filter
@@ -52,4 +54,5 @@ define([
   });
 
   changeFilter(activeFilter);
+  map();
 });
