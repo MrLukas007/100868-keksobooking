@@ -6,7 +6,7 @@
 
 'use strict';
 
-define(['./load'], function(loader) {
+define(['./load', './utils'], function(loader, utils) {
   /** @type {boolean} Подключено ли API Google карт */
   var isAPIInitialized = false;
 
@@ -20,18 +20,25 @@ define(['./load'], function(loader) {
 
 
   /** @constant {string} URL для подключения Google Maps API */
-  var GOOGLE_MAPS_URL = [
-    'https://maps.googleapis.com/maps/api/js?key=',
-    GOOGLE_MAPS_KEY
-  ].join('');
+  var GOOGLE_MAPS_URL = '//maps.googleapis.com/maps/api/js';
+
+
+  /**
+   * @constant {number} Продолжительность анимации по переключения режима
+   * карты. При изменении размеров контейнера, у блока с картой Google нужно
+   * вызывать метод resize, чтобы карта адаптировалась под новые размеры
+   * блока. В нашем случае размер карты меняется плавно, с помощью CSS-анимации,
+   * поэтому событие обновления размера нужно вызывать только один раз в конце
+   * анимации
+   */
+  var MAPS_ANIMATION_TIMEOUT = 500;
 
 
   /**
    * @constant {{ lat: number, lng: number }} Координаты центра Токио —
    * изначальная центральная точка, с которой начинается показ карт
    */
-  var TOKYO_CENTER = { lat: -34.397, lng: 150.644 };
-
+  var TOKYO_CENTER = { lat: 35.6895, lng: 139.6917 };
 
   /**
    * Конструктор создает только объект для управления картой,
@@ -42,10 +49,24 @@ define(['./load'], function(loader) {
    * @constructor
    */
   var GMap = function() {
+    /** @type {HTMLElement} */
     this.container = null;
-    this.defaults = { center: TOKYO_CENTER, zoom: 8 };
+
+    /** @type {HTMLElement} */
+    this.mapContainer = null;
+
+    /** @type {boolean} */
     this.isDecorated = false;
+
+    /** @type {google.maps.Map} */
     this.mapElement = null;
+
+    /** @type {google.maps.MapOptions} */
+    this.defaults = {
+      center: TOKYO_CENTER,
+      scrollwheel: false,
+      zoom: 14
+    };
   };
 
 
@@ -65,7 +86,8 @@ define(['./load'], function(loader) {
    */
   GMap.decorate = function(map, container, expand, onDecorate) {
     map.container = container;
-    map.mapElement = new window.google.maps.Map(this.container, this.defaults);
+    map.mapContainer = map.container.querySelector('.map-container');
+    map.mapElement = new window.google.maps.Map(map.mapContainer, map.defaults);
     map.isDecorated = true;
 
     if (typeof onDecorate === 'function') {
@@ -73,17 +95,24 @@ define(['./load'], function(loader) {
     }
 
     if (expand) {
-      map.setMarkers(markers || []);
       map.show();
     }
   };
 
   GMap.prototype.show = function() {
+    utils.setElementHidden(this.container, false);
 
+    setTimeout(function() {
+      google.maps.event.trigger(this.mapElement, 'resize');
+    }, MAPS_ANIMATION_TIMEOUT);
   };
 
   GMap.prototype.hide = function() {
+    utils.setElementHidden(this.container, true);
 
+    setTimeout(function() {
+      google.maps.event.trigger(this.mapElement, 'resize');
+    }, MAPS_ANIMATION_TIMEOUT);
   };
 
   /** @param {Array.<Object>} markers */
@@ -109,7 +138,7 @@ define(['./load'], function(loader) {
       loader.loadJSONP(GOOGLE_MAPS_URL, function() {
         GMap.decorate(mapController, container, expandByDefault, onDecorate);
         isAPIInitialized = true;
-      });
+      }, { key: GOOGLE_MAPS_KEY });
     }
 
     // NB! Модуль всегда возвращает один объект, несмотря на то, что этот объект

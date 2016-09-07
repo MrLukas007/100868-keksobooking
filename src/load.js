@@ -27,13 +27,26 @@ define(function() {
       xhr.send();
     },
 
-    loadJSONP: function(url, callback, cbName) {
+    loadJSONP: function(url, callback, params, cbName) {
       cbName = cbName || 'cb' + Date.now();
-      window[cbName] = callback;
+      window[cbName] = function() {
+        if (typeof callback === 'function') {
+          callback();
+        }
+      };
 
       var scriptElement = document.createElement('script');
-      scriptElement.src = url + '?callback=' + cbName;
+      scriptElement.src = url + '?' + getSearchString(Object.assign({
+        'callback': cbName
+      }, params));
+
       scriptElement.async = true;
+      scriptElement.defer = true;
+      scriptElement.onload = function(evt) {
+        delete window[cbName];
+        document.body.removeChild(evt.target);
+      };
+
       document.body.appendChild(scriptElement);
     }
   };

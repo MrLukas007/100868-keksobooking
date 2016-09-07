@@ -18,6 +18,10 @@ define([
   var pageNumber = 0;
   var pageSize = 9;
 
+  var isMapRequested = function() {
+    return location.hash.indexOf('map') > -1;
+  };
+
   var renderHotels = function(loadedHotels) {
     loadedHotels.forEach(function(hotelData) {
       container.appendChild(new Hotel(hotelData).element);
@@ -45,14 +49,21 @@ define([
     }
   }, THROTTLE_TIMEOUT);
 
+  changeFilter(activeFilter);
+  var mapController = map(mapContainer, isMapRequested());
+
   window.addEventListener('scroll', scrollHandler);
+  window.addEventListener('hashchange', function() {
+    if (isMapRequested()) {
+      mapController.show();
+    } else {
+      mapController.hide();
+    }
+  });
 
   filters.addEventListener('click', function(evt) {
     if (evt.target.classList.contains('hotel-filter')) {
       changeFilter(evt.target.id);
     }
   });
-
-  changeFilter(activeFilter);
-  map();
 });
