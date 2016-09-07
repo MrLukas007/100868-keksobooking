@@ -56,6 +56,9 @@ define(['./load', './utils'], function(loader, utils) {
     /** @type {HTMLElement} */
     this.mapContainer = null;
 
+    /** @type {HTMLElement} */
+    this.switchElement = null;
+
     /** @type {boolean} */
     this.isDecorated = false;
 
@@ -88,8 +91,17 @@ define(['./load', './utils'], function(loader, utils) {
   GMap.decorate = function(map, container, expand, onDecorate) {
     map.container = container;
     map.mapContainer = map.container.querySelector('.map-container');
+    map.switchElement = map.container.querySelector('.map-switch');
     map.mapElement = new window.google.maps.Map(map.mapContainer, map.defaults);
     map.isDecorated = true;
+
+    map.switchElement.addEventListener('click', function(evt) {
+      evt.preventDefault();
+
+      if (typeof map.onSwitchClick === 'function') {
+        map.onSwitchClick.call(map);
+      }
+    });
 
     if (typeof onDecorate === 'function') {
       onDecorate();
@@ -120,6 +132,9 @@ define(['./load', './utils'], function(loader, utils) {
   GMap.prototype.setMarkers = function(markers) {
     this.markers = markers;
   };
+
+  /** @type {Function} Коллбэк обработчика клика по переключателю карты */
+  GMap.prototype.onSwitchClick = null;
 
   /**
    * Из модуля экспортируется не объект, управляющий картой, а функция, которая

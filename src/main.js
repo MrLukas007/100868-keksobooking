@@ -52,8 +52,12 @@ define([
   changeFilter(activeFilter);
   var mapController = map(mapContainer, isMapRequested());
 
+  mapController.onSwitchClick = function() {
+    location.hash = isMapRequested() ? '' : 'map';
+  };
+
   window.addEventListener('scroll', scrollHandler);
-  window.addEventListener('hashchange', function() {
+  window.addEventListener('popstate', function() {
     if (isMapRequested()) {
       mapController.show();
     } else {
