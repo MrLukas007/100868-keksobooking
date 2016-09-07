@@ -8,9 +8,8 @@
 
 
 define([
-  './gallery',
-  './load'
-], function(gallery, load) {
+  './gallery'
+], function(gallery) {
   /** @constant {number} */
   var IMAGE_LOAD_TIMEOUT = 10000;
 
