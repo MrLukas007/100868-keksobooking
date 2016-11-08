@@ -13,44 +13,16 @@ define(function() {
     }).join('&');
   };
 
-  return {
-    load: function(url, params, callback) {
-      var xhr = new XMLHttpRequest();
+  return function(url, params, callback) {
+    var xhr = new XMLHttpRequest();
 
-      xhr.onload = function(evt) {
-        try {
-          var loadedData = JSON.parse(evt.target.response);
-          callback(loadedData);
-        } catch(err) {
-          console.warn(err);
-        }
-      };
+    xhr.onload = function(evt) {
+      var loadedData = JSON.parse(evt.target.response);
+      callback(loadedData);
+    };
 
-      xhr.open('GET', url + '?' + getSearchString(params));
-      xhr.send();
-    },
+    xhr.open('GET', url + '?' + getSearchString(params));
 
-    loadJSONP: function(url, callback, params, cbName) {
-      cbName = cbName || 'cb' + Date.now();
-      window[cbName] = function() {
-        if (typeof callback === 'function') {
-          callback();
-        }
-      };
-
-      var scriptElement = document.createElement('script');
-      scriptElement.src = url + '?' + getSearchString(Object.assign({
-        'callback': cbName
-      }, params));
-
-      scriptElement.async = true;
-      scriptElement.defer = true;
-      scriptElement.onload = function(evt) {
-        delete window[cbName];
-        document.body.removeChild(evt.target);
-      };
-
-      document.body.appendChild(scriptElement);
-    }
+    xhr.send();
   };
 });

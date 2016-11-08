@@ -72,10 +72,7 @@ body {
 .welcome {
   background: #5d93a0 url('../img/welcome-overlay.jpg') no-repeat;
   background-size: auto 100%;
-  box-shadow: 0 8px 15px rgba(0, 26, 46, 0.36);
   padding: 56px 0 75px;
-  position: relative;
-  z-index: 1;
 }
 
 .welcome-title,
@@ -183,31 +180,12 @@ body {
 }
 
 /* Map preview */
-.map {
-  background: #999;
-  bottom: 3vh;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  height: 93vh;
-  left: 0;
-  margin-left: 5%;
-  position: fixed;
-  transform: scale(1.05);
-  transition: transform 150ms ease-out;
-  width: 90%;
-  z-index: 1;
-}
+.map {}
 
-.map.hidden {
-  bottom: auto;
-  box-shadow: none;
-  display: block !important;
+.map-hidden {
+  box-shadow: inset 0 8px 15px rgba(0, 26, 46, 0.36);
   height: 68px;
-  margin-left: 0;
   position: relative;
-  transform: scale(1);
-  transition: none;
-  width: 100%;
-  z-index: 0;
 }
 
 .map-switch {
@@ -217,17 +195,9 @@ body {
   cursor: pointer;
   height: 44px;
   left: 50%;
-  transform: transitionX(-50%);
+  margin-left: -25px;
   position: absolute;
   width: 50px;
-}
-
-.map-container {
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 100%;
 }
 
 /* Results list. */
